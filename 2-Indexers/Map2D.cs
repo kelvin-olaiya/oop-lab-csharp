@@ -8,7 +8,7 @@ namespace Indexers
     /// <inheritdoc cref="IMap2D{TKey1,TKey2,TValue}" />
     public class Map2D<TKey1, TKey2, TValue> : IMap2D<TKey1, TKey2, TValue>
     {
-        private IDictionary<Tuple<TKey1, TKey2>, TValue> map2D = new Dictionary<Tuple<TKey1, TKey2>, TValue>();
+        private readonly IDictionary<Tuple<TKey1, TKey2>, TValue> map2D = new Dictionary<Tuple<TKey1, TKey2>, TValue>();
 
         /// <inheritdoc cref="IMap2D{TKey1, TKey2, TValue}.NumberOfElements" />
         public int NumberOfElements
@@ -50,9 +50,9 @@ namespace Indexers
         {
             foreach(TKey1 k1 in keys1)
             {
-                foreach(TKey2 k2 in keys2)
+                foreach (TKey2 k2 in keys2)
                 {
-                    map2D.Add(new Tuple<TKey1, TKey2>(k1, k2), generator(k1, k2));
+                    map2D[Tuple.Create(k1, k2)] = generator(k1, k2);
                 }
             }
         }
