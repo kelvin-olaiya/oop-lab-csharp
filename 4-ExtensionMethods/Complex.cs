@@ -20,66 +20,40 @@ namespace ExtensionMethods
         }
 
         /// <inheritdoc cref="IComplex.Real"/>
-        public double Real
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-        }
+        public double Real => this.re;
 
         /// <inheritdoc cref="IComplex.Imaginary"/>
-        public double Imaginary
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-        }
+        public double Imaginary => this.im;
 
         /// <inheritdoc cref="IComplex.Modulus"/>
-        public double Modulus
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-        }
+        public double Modulus => Math.Sqrt(Math.Pow(Real, 2) + Math.Pow(Imaginary, 2));
+
 
         /// <inheritdoc cref="IComplex.Phase"/>
-        public double Phase
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-        }
+        public double Phase => Math.Atan2(Real, Imaginary);
 
         /// <inheritdoc cref="IComplex.ToString"/>
         public override string ToString()
         {
-            // TODO improve
-            return base.ToString();
+            return this.Real + " " + this.Imaginary + "i";
         }
 
         /// <inheritdoc cref="IEquatable{T}.Equals(T)"/>
         public bool Equals(IComplex other)
         {
-            throw new System.NotImplementedException();
+            return this.Equals(other);
         }
 
-        /// <inheritdoc cref="object.Equals(object?)"/>
-        public override bool Equals(object obj)
-        {
-            // TODO improve
-            return base.Equals(obj);
-        }
-
-        /// <inheritdoc cref="object.GetHashCode"/>
         public override int GetHashCode()
         {
-            // TODO improve
-            return base.GetHashCode();
+            return HashCode.Combine(re, im);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Complex complex &&
+                   re.CompareTo(complex.re) == 0 &&
+                   im.CompareTo(complex.im) == 0;
         }
     }
 }
