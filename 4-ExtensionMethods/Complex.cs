@@ -28,7 +28,7 @@ namespace ExtensionMethods
         public double Imaginary => this.im;
 
         /// <inheritdoc cref="IComplex.Modulus"/>
-        public double Modulus => Math.Sqrt(Math.Pow(Real, 2) + Math.Pow(Imaginary, 2));
+        public double Modulus => Math.Sqrt(Real * Real + Imaginary * Imaginary);
 
 
         /// <inheritdoc cref="IComplex.Phase"/>
@@ -43,8 +43,18 @@ namespace ExtensionMethods
         /// <inheritdoc cref="IEquatable{T}.Equals(T)"/>
         public bool Equals(IComplex other)
         {
-            return Math.Abs(Real - other.Real) < Tolerance
-                && Math.Abs(Imaginary - other.Imaginary) < Tolerance;
+            return other != null
+                && Math.Abs(other.Real - Real) < Tolerance
+                && Math.Abs(other.Imaginary - Imaginary) < Tolerance;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Complex complex)
+            {
+                return this.Equals(complex);
+            }
+            return false;
         }
 
         public override int GetHashCode()
