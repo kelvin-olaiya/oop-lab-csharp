@@ -38,7 +38,8 @@ namespace OperatorsOverloading
         /// <returns>a new list with the given elements.</returns>
         public static implicit operator List<TValue>(TValue[] enumerable)
         {
-            throw new NotImplementedException();
+            //return new List<TValue>()
+            return List.From(enumerable.AsEnumerable());
         }
 
         /// <summary>
@@ -48,7 +49,7 @@ namespace OperatorsOverloading
         /// <returns>a new list with only the given element.</returns>
         public static implicit operator List<TValue>(TValue element)
         {
-            throw new NotImplementedException();
+            return List.Of(element);
         }
 
         /// <summary>
@@ -58,7 +59,7 @@ namespace OperatorsOverloading
         /// <returns>an array containing the elements of the list.</returns>
         public static explicit operator TValue[](List<TValue> list)
         {
-            throw new NotImplementedException();
+            return list.ToFlat().ToArray();
         }
 
         /// <summary>
@@ -72,7 +73,14 @@ namespace OperatorsOverloading
         /// </returns>
         public static bool operator ==(List<TValue> list1, List<TValue> list2)
         {
-            throw new NotImplementedException();
+            if (list1.Length != list2.Length)
+            {
+                return false;
+            }
+
+            return list1.Length == Enumerable.Range(0, list1.Length)
+                .Select(i => list1.ToFlat().ElementAt(1))
+                .Where(e => e.Equals(list2.ToFlat().ElementAt(1))).Count();
         }
 
         /// <summary>
@@ -85,7 +93,7 @@ namespace OperatorsOverloading
         /// </returns>
         public static bool operator !=(List<TValue> list1, List<TValue> list2)
         {
-            throw new NotImplementedException();
+            return !(list1 == list2);
         }
 
         /// <summary>
@@ -100,7 +108,7 @@ namespace OperatorsOverloading
         /// </returns>
         public static bool operator >=(List<TValue> list1, List<TValue> list2)
         {
-            throw new NotImplementedException();
+            return list1.Length >= list2.Length;
         }
 
         /// <summary>
@@ -115,7 +123,7 @@ namespace OperatorsOverloading
         /// </returns>
         public static bool operator <=(List<TValue> list1, List<TValue> list2)
         {
-            throw new NotImplementedException();
+            return list1.Length <= list2.Length;
         }
 
         /// <summary>
@@ -128,7 +136,7 @@ namespace OperatorsOverloading
         /// </returns>
         public static bool operator <(List<TValue> list1, List<TValue> list2)
         {
-            throw new NotImplementedException();
+            return !(list1 >= list2);
         }
 
         /// <summary>
@@ -141,7 +149,7 @@ namespace OperatorsOverloading
         /// </returns>
         public static bool operator >(List<TValue> list1, List<TValue> list2)
         {
-            throw new NotImplementedException();
+            return !(list1 >= list2);
         }
 
         /// <summary>
@@ -152,7 +160,7 @@ namespace OperatorsOverloading
         /// <returns>the result list.</returns>
         public static List<TValue> operator +(List<TValue> list1, List<TValue> list2)
         {
-            throw new NotImplementedException();
+            return List.Append(list1, list2);
         }
 
         /// <summary>
@@ -164,7 +172,8 @@ namespace OperatorsOverloading
         /// <returns>the result list.</returns>
         public static List<TValue> operator -(List<TValue> list1, List<TValue> list2)
         {
-            throw new NotImplementedException();
+
+            return List.From(list1.ToFlat().Where(e => !list2.ToFlat().Contains(e)));
         }
 
         /// <summary>
