@@ -3,6 +3,7 @@ namespace DelegatesAndEvents
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <inheritdoc cref="IObservableList{T}" />
     public class ObservableList<TItem> : IObservableList<TItem>
@@ -29,7 +30,11 @@ namespace DelegatesAndEvents
         public TItem this[int index]
         {
             get => items[index];
-            set { items[index] = value; }
+            set
+            {
+                items[index] = value;
+                ElementInserted?.Invoke(this, value, index);
+            }
         }
 
         /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
@@ -47,17 +52,17 @@ namespace DelegatesAndEvents
         /// <inheritdoc cref="ICollection{T}.Add" />
         public void Add(TItem item)
         {
-            if (item == null)
-            {
-                return;
-            }
             items.Add(item);
-            
+            ElementInserted?.Invoke(this, item, items.IndexOf(item));
         }
 
         /// <inheritdoc cref="ICollection{T}.Clear" />
         public void Clear()
         {
+            for (int i = 0; i < items.Count(); i++)
+            {
+                ElementRemoved?.Invoke(this, items[i], i);
+            }
             items.Clear();
         }
 
@@ -73,6 +78,7 @@ namespace DelegatesAndEvents
         /// <inheritdoc cref="ICollection{T}.Remove" />
         public bool Remove(TItem item)
         {
+            ElementRemoved?.Invoke(this, item, items.IndexOf(item));
             return items.Remove(item);
         }
 
@@ -82,12 +88,19 @@ namespace DelegatesAndEvents
         /// <inheritdoc cref="IList{T}.RemoveAt" />
         public void Insert(int index, TItem item)
         {
+            List<TItem> copy = new List<TItem>(items);
             items.Insert(index, item);
+            
+            for (int i = index; i < copy.Count(); i++)
+            {
+                ElementChanged?.Invoke(this, items[i], copy[i], i);
+            }
         }
 
         /// <inheritdoc cref="IList{T}.RemoveAt" />
         public void RemoveAt(int index)
         {
+            ElementRemoved?.Invoke(this, items[index], index);
             items.RemoveAt(index);
         }
 
