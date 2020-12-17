@@ -8,7 +8,7 @@ namespace DelegatesAndEvents
     /// <inheritdoc cref="IObservableList{T}" />
     public class ObservableList<TItem> : IObservableList<TItem>
     {
-        private readonly List<TItem> items = new List<TItem>();
+        private readonly IList<TItem> items = new List<TItem>();
         private readonly bool readOnly;
 
         /// <inheritdoc cref="IObservableList{T}.ElementInserted" />
@@ -24,7 +24,7 @@ namespace DelegatesAndEvents
         public int Count => items.Count;
 
         /// <inheritdoc cref="ICollection{T}.IsReadOnly" />
-        public bool IsReadOnly => this.readOnly;
+        public bool IsReadOnly => this.items.IsReadOnly;
 
         /// <inheritdoc cref="IList{T}.this" />
         public TItem this[int index]
@@ -32,8 +32,9 @@ namespace DelegatesAndEvents
             get => items[index];
             set
             {
+                var old = items[index];
                 items[index] = value;
-                ElementInserted?.Invoke(this, value, index);
+                ElementChanged?.Invoke(this, value, old, index);
             }
         }
 
@@ -90,11 +91,7 @@ namespace DelegatesAndEvents
         {
             List<TItem> copy = new List<TItem>(items);
             items.Insert(index, item);
-            
-            for (int i = index; i < copy.Count(); i++)
-            {
-                ElementChanged?.Invoke(this, items[i], copy[i], i);
-            }
+            ElementInserted?.Invoke(this, item, index);
         }
 
         /// <inheritdoc cref="IList{T}.RemoveAt" />
@@ -107,7 +104,7 @@ namespace DelegatesAndEvents
         public override bool Equals(object obj)
         {
             return obj is ObservableList<TItem> list &&
-                   EqualityComparer<List<TItem>>.Default.Equals(items, list.items) &&
+                   EqualityComparer<IList<TItem>>.Default.Equals(items, list.items) &&
                    readOnly == list.readOnly;
         }
 
