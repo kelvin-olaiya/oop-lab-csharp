@@ -7,6 +7,9 @@ namespace DelegatesAndEvents
     /// <inheritdoc cref="IObservableList{T}" />
     public class ObservableList<TItem> : IObservableList<TItem>
     {
+        private readonly List<TItem> items = new List<TItem>();
+        private readonly bool readOnly;
+
         /// <inheritdoc cref="IObservableList{T}.ElementInserted" />
         public event ListChangeCallback<TItem> ElementInserted;
 
@@ -17,34 +20,22 @@ namespace DelegatesAndEvents
         public event ListElementChangeCallback<TItem> ElementChanged;
 
         /// <inheritdoc cref="ICollection{T}.Count" />
-        public int Count
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public int Count => items.Count;
 
         /// <inheritdoc cref="ICollection{T}.IsReadOnly" />
-        public bool IsReadOnly
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public bool IsReadOnly => this.readOnly;
 
         /// <inheritdoc cref="IList{T}.this" />
         public TItem this[int index]
         {
-            get { throw new System.NotImplementedException(); }
-            set { throw new System.NotImplementedException(); }
+            get => items[index];
+            set { items[index] = value; }
         }
 
         /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
         public IEnumerator<TItem> GetEnumerator()
         {
-            throw new System.NotImplementedException();
+            return items.GetEnumerator();
         }
 
         /// <inheritdoc cref="IEnumerable.GetEnumerator" />
@@ -56,70 +47,60 @@ namespace DelegatesAndEvents
         /// <inheritdoc cref="ICollection{T}.Add" />
         public void Add(TItem item)
         {
-            throw new System.NotImplementedException();
+            if (item == null)
+            {
+                return;
+            }
+            items.Add(item);
+            
         }
 
         /// <inheritdoc cref="ICollection{T}.Clear" />
         public void Clear()
         {
-            throw new System.NotImplementedException();
+            items.Clear();
         }
 
         /// <inheritdoc cref="ICollection{T}.Contains" />
-        public bool Contains(TItem item)
-        {
-            throw new System.NotImplementedException();
-        }
+        public bool Contains(TItem item) => items.Contains(item);
 
         /// <inheritdoc cref="ICollection{T}.CopyTo" />
         public void CopyTo(TItem[] array, int arrayIndex)
         {
-            throw new System.NotImplementedException();
+            items.ToArray().CopyTo(array, arrayIndex);
         }
 
         /// <inheritdoc cref="ICollection{T}.Remove" />
         public bool Remove(TItem item)
         {
-            throw new System.NotImplementedException();
+            return items.Remove(item);
         }
 
         /// <inheritdoc cref="IList{T}.IndexOf" />
-        public int IndexOf(TItem item)
-        {
-            throw new System.NotImplementedException();
-        }
+        public int IndexOf(TItem item) => items.IndexOf(item);
 
         /// <inheritdoc cref="IList{T}.RemoveAt" />
         public void Insert(int index, TItem item)
         {
-            throw new System.NotImplementedException();
+            items.Insert(index, item);
         }
 
         /// <inheritdoc cref="IList{T}.RemoveAt" />
         public void RemoveAt(int index)
         {
-            throw new System.NotImplementedException();
+            items.RemoveAt(index);
         }
 
-        /// <inheritdoc cref="object.Equals(object?)" />
         public override bool Equals(object obj)
         {
-            // TODO improve
-            return base.Equals(obj);
+            return obj is ObservableList<TItem> list &&
+                   EqualityComparer<List<TItem>>.Default.Equals(items, list.items) &&
+                   readOnly == list.readOnly;
         }
 
-        /// <inheritdoc cref="object.GetHashCode" />
         public override int GetHashCode()
         {
-            // TODO improve
-            return base.GetHashCode();
-        }
-
-        /// <inheritdoc cref="object.ToString" />
-        public override string ToString()
-        {
-            // TODO improve
-            return base.ToString();
+            return HashCode.Combine(items, readOnly);
         }
     }
 }
