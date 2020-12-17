@@ -5,6 +5,8 @@ namespace ExtensionMethods
     /// <inheritdoc cref="IComplex"/>
     public class Complex : IComplex
     {
+        private const double Tolerance = 1E-7;
+
         private readonly double re;
         private readonly double im;
 
@@ -41,19 +43,13 @@ namespace ExtensionMethods
         /// <inheritdoc cref="IEquatable{T}.Equals(T)"/>
         public bool Equals(IComplex other)
         {
-            return this.Equals(other);
+            return Math.Abs(Real - other.Real) < Tolerance
+                && Math.Abs(Imaginary - other.Imaginary) < Tolerance;
         }
 
         public override int GetHashCode()
         {
             return HashCode.Combine(re, im);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is Complex complex &&
-                   re.CompareTo(complex.re) == 0 &&
-                   im.CompareTo(complex.im) == 0;
         }
     }
 }
